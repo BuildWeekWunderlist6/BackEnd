@@ -14,7 +14,7 @@ describe('Users model', () => {
     });
 
     test('creating a user', async () => {
-        const [createdUser] = await Users.create(user);
+        const createdUser = await Users.create(user);
         expect(createdUser).toMatchObject(user);
         expect(createdUser.id).toBeDefined();
     });
@@ -26,14 +26,14 @@ describe('Users model', () => {
     });
 
     test('get users should include newly created user', async () => {
-        const [createdUser] = await Users.create(user);
+        const createdUser = await Users.create(user);
         const  users = await Users.get();
         expect(users).toHaveLength(1);
         expect(users.find(user => user.id === createdUser.id)).toBeDefined();
     });
 
     test('getting a user by id', async () => {
-        const [createdUser] = await Users.create(user);
+        const createdUser = await Users.create(user);
         const userById = await Users.getById(createdUser.id);
         expect(userById).toBeDefined();
         expect(userById.id).toBe(createdUser.id);

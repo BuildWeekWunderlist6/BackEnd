@@ -14,8 +14,9 @@ const getByEmail = () => {
 
 };
 
-const create = user => {
-    return db('users').insert(user, '*');
+const create = async user => {
+    const [id] = await db('users').insert(user, 'id');
+    return getById(id);
 };
 
 const update = (id, updates) => {
