@@ -31,4 +31,12 @@ describe('Users model', () => {
         expect(users).toHaveLength(1);
         expect(users.find(user => user.id === createdUser.id)).toBeDefined();
     });
+
+    test('getting a user by id', async () => {
+        const [createdUser] = await Users.create(user);
+        const userById = await Users.getById(createdUser.id);
+        expect(userById).toBeDefined();
+        expect(userById.id).toBe(createdUser.id);
+        expect(userById).toMatchObject(createdUser);
+    });
 });

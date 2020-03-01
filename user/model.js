@@ -4,8 +4,10 @@ const get = () => {
     return db('users');
 };
 
-const getById = () => {
-
+const getById = (id) => {
+    return db('users')
+        .where({ id })
+        .first();
 };
 
 const getByEmail = () => {
