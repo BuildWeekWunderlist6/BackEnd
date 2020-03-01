@@ -47,4 +47,15 @@ describe('Users model', () => {
         expect(userByEmail.email).toBe(createdUser.email);
         expect(userByEmail).toMatchObject(createdUser);
     });
+
+    test('updating a user', async () => {
+        const createdUser = await Users.create(user);
+        const updates = {
+            first_name: 'Jimmy'
+        };
+        const updatedUser = await Users.update(createdUser.id, updates);
+        expect(updatedUser).toBeDefined();
+        expect(updatedUser.first_name).toBe(updates.first_name);
+    });
+
 });

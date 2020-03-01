@@ -21,8 +21,11 @@ const create = async user => {
     return getById(id);
 };
 
-const update = (id, updates) => {
-
+const update = async (id, updates) => {
+    await db('users')
+        .where({ id })
+        .update(updates);
+    return getById(id);
 };
 
 const remove = id => {
