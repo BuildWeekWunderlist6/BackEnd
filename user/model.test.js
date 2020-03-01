@@ -58,4 +58,17 @@ describe('Users model', () => {
         expect(updatedUser.first_name).toBe(updates.first_name);
     });
 
+    test('removing a user', async () => {
+        const createdUser = await Users.create(user);
+        let users = await Users.get();
+        expect(users).toHaveLength(1);
+
+        // ensure correct return
+        const [removed] = await Users.remove(createdUser.id);
+        expect(removed).toBe(1);
+        
+        // ensure user was actually removed
+        users = await Users.get();
+        expect(users).toHaveLength(0);
+    });
 });

@@ -29,7 +29,10 @@ const update = async (id, updates) => {
 };
 
 const remove = id => {
-
+    return db('users')
+        .where({ id })
+        .delete()
+        .returning('id');
 };
 
 module.exports = {
