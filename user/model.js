@@ -1,7 +1,7 @@
 const db = require('../data/db');
 
 const get = () => {
-
+    return db('users');
 };
 
 const getById = () => {
