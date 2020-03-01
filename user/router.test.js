@@ -60,6 +60,10 @@ describe('/users routes', () => {
 
     describe('POST /users/login', () => {
 
+        beforeEach(async () => {
+            await db('users').truncate();
+        });
+
         test('responds with 400 when body is invalid', async () => {
             const res = await request(server)
                 .post('/api/users/login')
