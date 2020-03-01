@@ -42,4 +42,32 @@ router.post('/register', async (req, res) => {
 
 });
 
+router.post('/login', async (req, res) => {
+    const credentials = req.body;
+
+    // ensure credentials are in body
+    if(!credentials.email || !credentials.password) {
+        res.status(400).json({ error: 'Email and password are required' });
+        return;
+    }
+
+    // ensure credentials are valid
+    const userWithThisEmail = await Users.getByEmail(credentials.email);
+    if(userWithThisEmail && bcrypt.compareSync(credentials.password, userWithThisEmail.password)) {
+
+        // user is valid, respond with token
+        const jwt = createJwt(userWithThisEmail);
+        res.status(200).json({
+            message: 'Success',
+            token: jwt
+        });
+
+    }
+    else {
+        // user credentials are not valid
+        res.status(401).json({ error: 'Credentials are invalid' });
+    }
+
+});
+
 module.exports = router;

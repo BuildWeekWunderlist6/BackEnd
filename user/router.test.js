@@ -5,14 +5,14 @@ const db = require('../data/db');
 
 describe('/users routes', () => {
 
-    describe('POST /users/register', () => {
+    const user = {
+        first_name: 'Jim',
+        last_name: 'Hopper',
+        email: 'hopper@hawkinspd.gov',
+        password: 'password123'
+    };
 
-        const user = {
-            first_name: 'Jim',
-            last_name: 'Hopper',
-            email: 'hopper@hawkinspd.gov',
-            password: 'password123'
-        };
+    describe('POST /users/register', () => {
 
         beforeEach(async () => {
             await db('users').truncate();
@@ -51,6 +51,66 @@ describe('/users routes', () => {
             const res = await request(server)
                 .post('/api/users/register')
                 .send(user);
+            expect(res.type).toMatch(/json/i);
+            expect(res.body.token).toBeDefined();
+            expect(res.body.token.length > 0).toBe(true);
+        });
+
+    });
+
+    describe('POST /users/login', () => {
+
+        test('responds with 400 when body is invalid', async () => {
+            const res = await request(server)
+                .post('/api/users/login')
+                .send({
+                    email: '',
+                    password: ''
+                });
+            expect(res.status).toBe(400);
+        });
+
+        test('responds with 401 if credentials are invalid', async () => {
+            const res = await request(server)
+                .post('/api/users/login')
+                .send({
+                    email: 'notauser@notawebsite.com',
+                    password: 'password1234'
+                });
+                
+                expect(res.status).toBe(401);
+        });
+
+        test('responds with 200', async () => {
+            // register a new user
+            await request(server)
+                .post('/api/users/register')
+                .send(user);
+
+            // login with the new user
+            const res = await request(server)
+                .post('/api/users/login')
+                .send({
+                    email: user.email,
+                    password: user.password
+                });
+            expect(res.status).toBe(200);
+        });
+
+        test('responds with token object', async () => {
+            // register a new user
+            await request(server)
+                .post('/api/users/register')
+                .send(user);
+
+            // login with the new user
+            const res = await request(server)
+                .post('/api/users/login')
+                .send({
+                    email: user.email,
+                    password: user.password
+                });
+            
             expect(res.type).toMatch(/json/i);
             expect(res.body.token).toBeDefined();
             expect(res.body.token.length > 0).toBe(true);
