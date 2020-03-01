@@ -10,7 +10,7 @@ module.exports = user => {
     };
 
     const options = {
-        expires: '1d'
+        expiresIn: '1d'
     };
 
     return jwt.sign(payload, jwtSecret, options);

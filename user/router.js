@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const Users = require('./model');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const createJwt = require('../utils/createJwt');
 
 router.post('/register', async (req, res) => {
     const user = req.body;
@@ -29,7 +29,11 @@ router.post('/register', async (req, res) => {
     try {
         user.password = bcrypt.hashSync(user.password, 12);
         const createdUser = await Users.create(user);
-        res.status(201).json({ token: '' });
+        const jwt = createJwt(createdUser);
+        res.status(201).json({
+            message: 'Success',
+            token: jwt
+        });
     }
     catch(err) {
         console.log(err);
