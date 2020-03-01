@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/BuildWeekWunderlist6/BackEnd#readme",
   "devDependencies": {
+    "cross-env": "^7.0.0",
     "jest": "^25.1.0",
     "nodemon": "^2.0.2",
     "supertest": "^4.0.2"
