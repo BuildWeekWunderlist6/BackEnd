@@ -39,4 +39,12 @@ describe('Users model', () => {
         expect(userById.id).toBe(createdUser.id);
         expect(userById).toMatchObject(createdUser);
     });
+
+    test('getting a user by email', async () => {
+        const createdUser = await Users.create(user);
+        const userByEmail = await Users.getByEmail(createdUser.email);
+        expect(userByEmail).toBeDefined();
+        expect(userByEmail.email).toBe(createdUser.email);
+        expect(userByEmail).toMatchObject(createdUser);
+    });
 });

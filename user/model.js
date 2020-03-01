@@ -4,14 +4,16 @@ const get = () => {
     return db('users');
 };
 
-const getById = (id) => {
+const getById = id => {
     return db('users')
         .where({ id })
         .first();
 };
 
-const getByEmail = () => {
-
+const getByEmail = email => {
+    return db('users')
+        .where({ email })
+        .first();
 };
 
 const create = async user => {
