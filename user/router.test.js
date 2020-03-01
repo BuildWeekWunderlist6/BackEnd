@@ -29,7 +29,7 @@ describe('/users routes', () => {
             expect(res.status).toBe(400);
         });
 
-        test('responds with 409 when email is in use', async () => {
+        test('responds with 409 when email is already in use', async () => {
             await Users.create(user);
             const newUser = { ...user };
 
