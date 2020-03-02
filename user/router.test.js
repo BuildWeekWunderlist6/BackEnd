@@ -142,4 +142,31 @@ describe('/users routes', () => {
         });
     });
 
+    describe('PUT /users/:id', () => {
+        test('responds with the updated user', async () => {
+            // register a new user
+            const registerRes = await request(server)
+                .post('/api/users/register')
+                .send(user);
+
+            const targetUser = await Users.get();
+            const id = targetUser[0].id;
+
+            const updates = {
+                first_name: 'Jimmy'
+            };
+
+            const res = await request(server)
+                .put(`/api/users/${id}`)
+                .set('Authorization', registerRes.body.token)
+                .send(updates);
+
+            expect(res.status).toBe(200);
+            expect(res.type).toMatch(/json/i);
+            expect(res.body.first_name).toBe(updates.first_name);
+        });
+    });
+
 });
+
+// *!* TODO: Tests for GET/PUT /users/:id to ensure only the user who belongs to that ID can access
