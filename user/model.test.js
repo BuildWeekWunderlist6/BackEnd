@@ -9,13 +9,19 @@ describe('Users model', () => {
         password: 'password123'
     };
 
+    const userWithoutPwd = {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email
+    };
+
     beforeEach(async () => {
         await db('users').truncate();
     });
 
     test('creating a user', async () => {
         const createdUser = await Users.create(user);
-        expect(createdUser).toMatchObject(user);
+        expect(createdUser).toMatchObject(userWithoutPwd);
         expect(createdUser.id).toBeDefined();
     });
 

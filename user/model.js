@@ -7,6 +7,7 @@ const get = () => {
 const getById = id => {
     return db('users')
         .where({ id })
+        .select('id', 'first_name', 'last_name', 'email')
         .first();
 };
 
