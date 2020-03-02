@@ -12,11 +12,11 @@ describe('/users routes', () => {
         password: 'password123'
     };
 
-    describe('POST /users/register', () => {
+    beforeEach(async () => {
+        await db('users').truncate();
+    });
 
-        beforeEach(async () => {
-            await db('users').truncate();
-        });
+    describe('POST /users/register', () => {
 
         test('responds with 400 when body is invalid', async () => {
             const invalidUser = {
@@ -59,10 +59,6 @@ describe('/users routes', () => {
     });
 
     describe('POST /users/login', () => {
-
-        beforeEach(async () => {
-            await db('users').truncate();
-        });
 
         test('responds with 400 when body is invalid', async () => {
             const res = await request(server)
@@ -120,6 +116,30 @@ describe('/users routes', () => {
             expect(res.body.token.length > 0).toBe(true);
         });
 
+    });
+
+    describe('GET /users/:id', () => {
+        test('responds with correct user', async () => {
+            // register a new user
+            const registerRes = await request(server)
+                .post('/api/users/register')
+                .send(user);
+
+            const targetUser = await Users.get();
+            const id = targetUser[0].id;
+            
+            const res = await request(server)
+                .get(`/api/users/${id}`)
+                .set('Authorization', registerRes.body.token);
+
+            expect(res.status).toBe(200);
+            expect(res.type).toMatch(/json/i);
+            expect(res.body.id).toBeDefined();
+
+            // expect the id to be the id of user we're requesting
+            expect(res.body.id).toBe(id);
+            
+        });
     });
 
 });

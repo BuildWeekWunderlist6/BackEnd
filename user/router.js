@@ -2,6 +2,7 @@ const router = require('express').Router();
 const Users = require('./model');
 const bcrypt = require('bcryptjs');
 const createJwt = require('../utils/createJwt');
+const auth = require('../middleware/auth');
 
 router.post('/register', async (req, res) => {
     const user = req.body;
@@ -68,6 +69,18 @@ router.post('/login', async (req, res) => {
         res.status(401).json({ error: 'Credentials are invalid' });
     }
 
+});
+
+router.get('/:id', auth, async (req, res) => {
+    const { id } = req.params;
+    try {
+        const userById =  await Users.getById(id);
+        res.status(200).json(userById);
+    }
+    catch(err) {
+        console.log(err);
+        res.status(500).json({ error: 'Something went wrong getting this user' });
+    }
 });
 
 module.exports = router;
