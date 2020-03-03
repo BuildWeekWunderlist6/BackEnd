@@ -1,4 +1,5 @@
 const TodoLists = require('./model');
+const TodoItems = require('../todo-item/model');
 const router = require('express').Router();
 
 router.post('/', async (req, res) => {
@@ -15,6 +16,28 @@ router.post('/', async (req, res) => {
     catch(err) {
         console.log(err);
         res.status(500).json({ error: 'Something went wrong creating this todo list' });
+    }
+});
+
+/**
+ * POST /todo-lists/:id/todo-items
+ */
+router.post('/:id/todo-items', async (req, res) => {
+    const { id: todoListId } = req.params;
+    const todoItem = req.body;
+    if(!todoItem.todo) {
+        res.status(400).json({ error: '"todo" is required' });
+        return;
+    }
+
+    try {
+        todoItem.todo_list_id = todoListId;
+        const createdTodoItem = await TodoItems.create(todoItem);
+        res.status(201).json(createdTodoItem);
+    }
+    catch(err) {
+        console.log(err);
+        res.status(500).json({ error: 'Something went wrong creating this todo item' });
     }
 });
 
@@ -43,18 +66,17 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// *!* TODO
-// router.delete('/:id', async (req, res) => {
-//     const { id } = req.params;
-//     // *!* Todo: should only be able to delete if this todo list belongs to you
-//     try {
-//         await TodoLists.remove(id);
-//         res.status(204).send();
-//     }
-//     catch(err) {
-//         console.log(err);
-//         res.status(500).json({ error: 'Something went wrong deleting this todo' });
-//     }
-// });
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    // *!* Todo: should only be able to delete if this todo list belongs to you
+    try {
+        await TodoLists.remove(id);
+        res.status(204).send();
+    }
+    catch(err) {
+        console.log(err);
+        res.status(500).json({ error: 'Something went wrong deleting this todo' });
+    }
+});
 
 module.exports = router;
