@@ -33,7 +33,12 @@ const update = async (id, updates) => {
     return getById(id);
 };
 
-const remove = id => {
+const remove = async id => {
+    // delete user to list
+    await db('user_todo_lists')
+        .where('todo_list_id', id)
+        .del();
+
     return db('todo_lists')
         .where({ id })
         .del();

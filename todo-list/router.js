@@ -66,18 +66,17 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// *!* TODO
-// router.delete('/:id', async (req, res) => {
-//     const { id } = req.params;
-//     // *!* Todo: should only be able to delete if this todo list belongs to you
-//     try {
-//         await TodoLists.remove(id);
-//         res.status(204).send();
-//     }
-//     catch(err) {
-//         console.log(err);
-//         res.status(500).json({ error: 'Something went wrong deleting this todo' });
-//     }
-// });
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    // *!* Todo: should only be able to delete if this todo list belongs to you
+    try {
+        await TodoLists.remove(id);
+        res.status(204).send();
+    }
+    catch(err) {
+        console.log(err);
+        res.status(500).json({ error: 'Something went wrong deleting this todo' });
+    }
+});
 
 module.exports = router;
