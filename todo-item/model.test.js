@@ -37,6 +37,36 @@ describe('todo-item model', () => {
         done();
     });
 
+    test('getting todos by user', async () => {
+        const query = {
+            todo_list_id: null,
+            by_period: null,
+            marked_as: null
+        };
+
+        const list1 = await TodoLists.create(user.id, {
+            name: 'Hawkins PD Morning Todo'
+        });
+
+        const list2 = await TodoLists.create(user.id, {
+            name: 'Hawkins PD Afternoon Todo'
+        });
+
+        const todoItem2 = {
+            todo: 'Make more coffee',
+            complete: false
+        };
+
+        await TodoItems.create({ ...todoItem, todo_list_id: list1.id });
+        await TodoItems.create({ ...todoItem2, todo_list_id: list2.id });
+
+        const todos = await TodoItems.getByQuery(query);
+
+        expect(Array.isArray(todos)).toBe(true);
+        expect(todos).toHaveLength(2);
+        
+    });
+
     test('getting todos by list id', async done => {
         const createdTodo = await TodoItems.create({ ...todoItem, todo_list_id: list.id });
         const todosByList = await TodoItems.getByList(list.id);
