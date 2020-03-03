@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Users = require('./model');
+const TodoLists = require('../todo-list/model');;
 const bcrypt = require('bcryptjs');
 const createJwt = require('../utils/createJwt');
 const auth = require('../middleware/auth');
@@ -81,6 +82,19 @@ router.get('/:id', auth, async (req, res) => {
         console.log(err);
         res.status(500).json({ error: 'Something went wrong getting this user' });
     }
+});
+
+router.get('/:id/todo-lists', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const todoLists = await TodoLists.getByUser(id);
+        res.status(200).json(todoLists);
+    }
+    catch(err) {
+        console.log(err);
+        res.status(500).json({ error: "Something went wrong getting this user's todo lists" });
+    }
+
 });
 
 router.put('/:id', auth, async (req, res) => {
