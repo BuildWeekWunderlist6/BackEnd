@@ -1,4 +1,6 @@
 const db = require('../data/db');
+const moment = require('moment');
+const RecurringTodos = require('../recurring_todo/model');
 
 const getByList = todoListId => {
     return db('todo_items')
@@ -70,6 +72,72 @@ const update = async (id, updates) => {
     return getById(id);
 };
 
+/**
+ * Completes a todo by its ID. Works with recurring and non-recurring
+ * @param {int} id - id of the todo 
+ */
+const complete = async id => {
+    const completedAt = moment().format('YYYY-MM-DD h:mm:ss a');
+
+    const thisTodo = await getById(id);
+    if(thisTodo.recur_interval && thisTodo.recur_unit) {
+        // this todo is recurring
+        const recurringTodo = {
+            todo_item_id: id,
+            completed_at: completedAt
+        };
+
+        await RecurringTodos.create(recurringTodo);
+
+        // calculate what the next date should be based on the created date of the task
+
+        // get the complete by date or the date that this todo was created,
+        // and use it to increment up to the next completion date
+        let dateIncr = moment(thisTodo.complete_by || thisTodo.created_at);
+        const now = moment();
+        let timeUnit;
+
+        switch(thisTodo.recur_unit.toLowerCase()) {
+            case 'd':
+                timeUnit = 'days';
+                break;
+            case 'w':
+                timeUnit = 'weeks';
+                break;
+            case 'm':
+                timeUnit = 'months';
+                break;
+        }
+
+        // while the incremented date is before today
+        while(dateIncr.isBefore(now)) {
+            dateIncr = dateIncr.add(thisTodo.recur_interval, timeUnit); // <-- 3 'days', 2 'weeks', 4 'months', etc.
+            break;
+        }
+        // if the date has not incremented, it means the user is ahead of schedule in completing
+        // the recurring task, and we need to manually increment
+        if(!dateIncr.isAfter(moment(thisTodo.complete_by || thisTodo.created_at))) {
+            dateIncr = dateIncr.add(thisTodo.recur_interval, timeUnit); // <-- 3 'days', 2 'weeks', 4 'months', etc.
+        }
+
+        const updates = {
+            complete_by: dateIncr.format('YYYY-MM-DD h:mm:ss a')
+        };
+        
+        return update(id, updates);
+
+    }
+    else {
+        // this todo is not recurring
+        const updates = {
+            complete: !thisTodo.complete,
+            completed_at: thisTodo.complete ? null : completedAt
+        };
+        
+        return update(id, updates);
+    }
+};
+
 const remove = id => {
     return db('todo_items')
         .where({ id })
@@ -82,5 +150,6 @@ module.exports = {
     getById,
     create,
     update,
+    complete,
     remove
 };
