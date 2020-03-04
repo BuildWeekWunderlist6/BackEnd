@@ -1,4 +1,5 @@
 const TodoItems = require('./model');
+const moment = require('moment');
 const router = require('express').Router();
 
 router.get('/', async (req, res) => {
@@ -13,6 +14,32 @@ router.get('/', async (req, res) => {
         res.status(500).json({ error: 'Something went wrong getting todos' });
     }
     
+});
+
+// completes a todo, and does crazy stuff if it's a recurring todo
+router.post('/:id/complete', async (req, res) => {
+    const { id } = req.params;
+    const thisTodo = await TodoItems.getById(id);
+    if(thisTodo.recur_interval && thisTodo.recur_unit) {
+        // this todo is recurring
+    }
+    else {
+        // this todo is not recurring
+        const updates = {
+            complete: !thisTodo.complete,
+            completed_at: thisTodo.complete ? null : moment().format('YYYY-MM-DD h:mm:ss a')
+        };
+
+        try {
+            const updatedTodo = await TodoItems.update(id, updates);
+            res.status(200).json(updatedTodo);
+        }
+        catch(err) {
+            console.log(err);
+            res.status(500).json({ error: 'Something went wrong completing this todo item' });
+        }
+    }
+
 });
 
 router.put('/:id', async (req, res) => {
