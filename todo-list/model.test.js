@@ -1,6 +1,7 @@
 const db = require('../data/db');
 const TodoLists = require('./model');
 const Users = require('../user/model');
+const truncateDb = require('../utils/truncateDb');
 
 describe('todo-list model', () => {
 
@@ -16,7 +17,7 @@ describe('todo-list model', () => {
     };
 
     beforeEach(async () => {
-        await db.raw('TRUNCATE TABLE user_todo_lists, todo_lists, users CASCADE');
+        await truncateDb();
     });
 
     test('creating a user returns new user', async () => {

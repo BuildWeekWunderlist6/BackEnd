@@ -1,17 +1,18 @@
 const db = require('../data/db');
-module.exports = () => {
+module.exports = async () => {
     try {
-    return db.raw(`
-    TRUNCATE TABLE
-        user_todo_lists,
-        recurring_todos,
-        todo_items,
-        todo_lists,
-        users
-        CASCADE`);
+        await db('todo_items').del();
+        await db('user_todo_lists').del();
+        await db('todo_lists').del();
+        await db('users').del();
     }
     catch(err) {
         console.log('error when truncating database', err);
     }
 };
 
+
+// SELECT * FROM todo_items;
+// SELECT * FROM user_todo_lists;
+// SELECT * FROM todo_lists;
+// SELECT * FROM users;

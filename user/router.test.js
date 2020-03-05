@@ -2,6 +2,7 @@ const request = require('supertest');
 const server = require('../api/server');
 const Users = require('./model');
 const db = require('../data/db');
+const truncateDb = require('../utils/truncateDb');
 
 describe('/users routes', () => {
 
@@ -13,7 +14,7 @@ describe('/users routes', () => {
     };
 
     beforeEach(async () => {
-        await db('users').truncate();
+        await truncateDb();
     });
 
     describe('POST /users/register', () => {

@@ -1,5 +1,6 @@
 const db = require('../data/db');
 const Users = require('./model');
+const truncateDb = require('../utils/truncateDb');
 
 describe('Users model', () => {
     const user = {
@@ -16,7 +17,7 @@ describe('Users model', () => {
     };
 
     beforeEach(async () => {
-        await db('users').truncate();
+        await truncateDb();
     });
 
     test('creating a user', async () => {

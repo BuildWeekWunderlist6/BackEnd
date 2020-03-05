@@ -1,6 +1,7 @@
 const request = require('supertest');
 const server = require('../api/server');
 const db = require('../data/db');
+const truncateDb = require('../utils/truncateDb');
 
 describe('Auth middleware', () => {
 
@@ -12,7 +13,7 @@ describe('Auth middleware', () => {
     };
 
     beforeEach(async () => {
-        await db('users').truncate();
+        await truncateDb();
     });
 
     test('server responds with 403 if no token is found', async () => {
