@@ -16,11 +16,18 @@ describe('todo-list model', () => {
         name: 'Hawkins PD Todo'
     };
 
-    beforeEach(async () => {
-        await truncateDb();
-    });
+    // beforeEach(async done => {
+    //     try {
+    //         await truncateDb();
+    //         done();
+    //     }
+    //     catch(err) {
+    //         console.log(err);
+    //     }
+    // });
 
     test('creating a user returns new user', async () => {
+        await truncateDb();
         const createdUser = await Users.create(user);
         const createdList = await TodoLists.create(createdUser.id, list);
 
@@ -30,6 +37,7 @@ describe('todo-list model', () => {
     });
 
     test('getting a list by id', async () => {
+        await truncateDb();
         const [id] = await db('todo_lists').insert(list, 'id');
         const listById = await TodoLists.getById(id);
 
@@ -38,6 +46,7 @@ describe('todo-list model', () => {
     });
 
     test("getting a user's list of todo lists", async () => {
+        await truncateDb();
         const createdUser = await Users.create(user);
 
         const list1 = {
@@ -59,6 +68,7 @@ describe('todo-list model', () => {
     });
 
     test('updating a list', async () => {
+        await truncateDb();
         const [id] = await db('todo_lists').insert(list, 'id');
         const updates = {
             name: "Hopper's Shopping List"
@@ -70,6 +80,7 @@ describe('todo-list model', () => {
     });
 
     test('removing a list', async () => {
+        await truncateDb();
         const [id] = await db('todo_lists').insert(list, 'id');
         await TodoLists.remove(id);
         const listById = await TodoLists.getById(id);

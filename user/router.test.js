@@ -13,13 +13,20 @@ describe('/users routes', () => {
         password: 'password123'
     };
 
-    beforeEach(async () => {
-        await truncateDb();
-    });
+    // beforeEach(async done => {
+    //     try {
+    //         await truncateDb();
+    //         done();
+    //     }
+    //     catch(err) {
+    //         console.log(err);
+    //     }
+    // });
 
     describe('POST /users/register', () => {
 
         test('responds with 400 when body is invalid', async () => {
+            await truncateDb();
             const invalidUser = {
                 email: '',
                 password: ''
@@ -31,6 +38,7 @@ describe('/users routes', () => {
         });
 
         test('responds with 409 when email is already in use', async () => {
+            await truncateDb();
             await Users.create(user);
             const newUser = { ...user };
 
@@ -42,6 +50,7 @@ describe('/users routes', () => {
         });
 
         test('responds with 201', async () => {
+            await truncateDb();
             const res = await request(server)
                 .post('/api/users/register')
                 .send(user);
@@ -49,6 +58,7 @@ describe('/users routes', () => {
         });
 
         test('responds with token object', async () => {
+            await truncateDb();
             const res = await request(server)
                 .post('/api/users/register')
                 .send(user);
@@ -62,6 +72,7 @@ describe('/users routes', () => {
     describe('POST /users/login', () => {
 
         test('responds with 400 when body is invalid', async () => {
+            await truncateDb();
             const res = await request(server)
                 .post('/api/users/login')
                 .send({
@@ -72,6 +83,7 @@ describe('/users routes', () => {
         });
 
         test('responds with 401 if credentials are invalid', async () => {
+            await truncateDb();
             const res = await request(server)
                 .post('/api/users/login')
                 .send({
@@ -83,6 +95,7 @@ describe('/users routes', () => {
         });
 
         test('responds with 200', async () => {
+            await truncateDb();
             // register a new user
             await request(server)
                 .post('/api/users/register')
@@ -99,6 +112,7 @@ describe('/users routes', () => {
         });
 
         test('responds with token object', async () => {
+            await truncateDb();
             // register a new user
             await request(server)
                 .post('/api/users/register')
@@ -121,6 +135,7 @@ describe('/users routes', () => {
 
     describe('GET /users/:id', () => {
         test('responds with correct user', async () => {
+            await truncateDb();
             // register a new user
             const registerRes = await request(server)
                 .post('/api/users/register')
@@ -145,6 +160,7 @@ describe('/users routes', () => {
 
     describe('PUT /users/:id', () => {
         test('responds with the updated user', async () => {
+            await truncateDb();
             // register a new user
             const registerRes = await request(server)
                 .post('/api/users/register')
