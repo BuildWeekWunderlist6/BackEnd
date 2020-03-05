@@ -5,31 +5,42 @@ const TodoItems = require('./model');
 const truncateDb = require('../utils/truncateDb');
 
 describe('todo-item model', () => {
-    let user;
-    let list;
+    
     const todoItem = {
         todo: 'Make coffee',
         complete: false,
     };
 
-    beforeEach(async done => {
-        await truncateDb();
-
-        user = await Users.create({
+    const makeUserAndList = async () => {
+        const user = await Users.create({
             first_name: 'Jim',
             last_name: 'Hopper',
-            email: 'hopperbemad@hawkinspd.gov',
+            email: 'hopper@hawkinspd.gov',
             password: 'password123'
         });
 
-        list = await TodoLists.create(user.id, {
+        const list = await TodoLists.create(user.id, {
             name: 'Hawkins PD Todo'
         });
 
-        done();
-    });
+        return { user, list }
+    };
+
+    // beforeEach(async done => {
+    //     try {
+    //         await truncateDb();
+    //         done();
+    //     }
+    //     catch(err) {
+    //         console.log(err);
+    //     }
+
+    //     done();
+    // });
 
     test('creating a todo returns a todo', async done => {
+        await truncateDb();
+        const { user, list } = makeUserAndList();
         const createdTodo = await TodoItems.create({ ...todoItem, todo_list_id: list.id });
         
         expect(createdTodo.id).toBeDefined();
@@ -38,11 +49,14 @@ describe('todo-item model', () => {
     });
 
     test('getting todos by user', async () => {
+        await truncateDb();
         const query = {
-            todo_list_id: null,
-            by_period: null,
-            marked_as: null
+            todo_list_id: 0,
+            by_period: '',
+            marked_as: ''
         };
+
+        const { user, list } = makeUserAndList();
 
         const list1 = await TodoLists.create(user.id, {
             name: 'Hawkins PD Morning Todo'
@@ -68,6 +82,8 @@ describe('todo-item model', () => {
     });
 
     test('getting todos by list id', async done => {
+        await truncateDb();
+        const { user, list } = makeUserAndList();
         const createdTodo = await TodoItems.create({ ...todoItem, todo_list_id: list.id });
         const todosByList = await TodoItems.getByList(list.id);
 
@@ -77,6 +93,8 @@ describe('todo-item model', () => {
     });
 
     test('updating a todo', async done => {
+        await truncateDb();
+        const { user, list } = makeUserAndList();
         const createdTodo = await TodoItems.create({ ...todoItem, todo_list_id: list.id });
         const updates = {
             complete: true
@@ -90,6 +108,8 @@ describe('todo-item model', () => {
     });
 
     test('removing a todo', async done => {
+        await truncateDb();
+        const { user, list } = makeUserAndList();
         const createdTodo = await TodoItems.create({ ...todoItem, todo_list_id: list.id });
         await TodoItems.remove(createdTodo.id);
         const removedTodo = await TodoItems.getById(createdTodo.id);
